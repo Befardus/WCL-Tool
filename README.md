@@ -19,12 +19,12 @@ Quellcode. Es dient dem Programm als Bezugsquelle für automatische Updates.
 ## Was das Programm kann
 
 - **Durchschnitt:** Schaden und DPS je Spieler über mehrere Abende, getrennt
-  nach Schwierigkeit und gerechnet über die Zeit, in der jemand wirklich
-  dabei war.
+  nach Schwierigkeit, für alle Bosse, einen Boss oder ausgewählte Pulls, und
+  gerechnet über die Zeit, in der jemand wirklich dabei war.
 - **Fortschritt:** Pulls, Abende und bester Versuch je Boss, zum Beispiel
   „P3 · 67 %“, und wann der Kill fiel.
 - **Tode:** Woran stirbt der Raid, und wer stirbt woran, mit oder ohne die
-  Tode mitten im Wipe.
+  Tode mitten im Wipe, auch für einzelne ausgewählte Pulls.
 - **Daten-Export:** Rohdaten eines Spielers als CSV/JSON, aufbereitet für
   eigene Auswertungen oder eine KI.
 
@@ -46,7 +46,7 @@ das Programm von selbst an.
 
 - Deine Warcraft-Logs-Zugangsdaten und alle geladenen Logs bleiben **nur auf
   deinem Rechner**.
-- Das Programm fragt höchstens einmal am Tag hier bei GitHub nach, ob es
+- Das Programm fragt höchstens alle 12 Stunden hier bei GitHub nach, ob es
   eine neue Version gibt. Dabei wird nichts von dir übertragen.
 
 ## Hinweise
