@@ -10,7 +10,7 @@ performance reports from them.
 
 ## Mandatory before you evaluate anything
 
-1. Read `references/INSTRUCTION_RAIDANALYSE.md` COMPLETELY before you open
+1. Read `references/RAID_ANALYSIS_INSTRUCTION.md` COMPLETELY before you open
    the first export file. It is the binding rule set; this text only
    summarises what must never be forgotten. In case of a contradiction,
    the reference file wins.

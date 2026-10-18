@@ -49,17 +49,20 @@ files look the same for everyone.
 
 ## Templates for your own analysis
 
-The folder [`vorlagen/`](vorlagen/) contains two files for analyzing an
-export with an AI: `INSTRUCTION_RAIDANALYSE.md` (an analysis instruction
-that explains how to read the export files) and `GEMINI_SKILL.md` (a short
-skill for Google Gemini that uses the instruction as its reference file).
-Both are in English. There is deliberately no example report – the
-instruction defines what a report has to contain, not what it has to look
-like.
+The folder [`ai-instruction-templates/`](ai-instruction-templates/)
+contains two files for analyzing an export with an AI:
+`RAID_ANALYSIS_INSTRUCTION.md` (an analysis instruction that explains how to
+read the export files) and `GEMINI_SKILL.md` (a short skill for Google
+Gemini that uses the instruction as its reference file). Both are in
+English. There is deliberately no example report – the instruction defines
+what a report has to contain, not what it has to look like.
+
+The instruction is not tied to one AI. With Claude, for example, add it to
+a project as the project instruction or as a project file.
 
 To set up the skill in Gemini: create a new skill, take the name and the
 description from the header of `GEMINI_SKILL.md`, paste everything below
-the header as the instructions, and add `INSTRUCTION_RAIDANALYSE.md` as a
+the header as the instructions, and add `RAID_ANALYSIS_INSTRUCTION.md` as a
 reference file.
 
 ## Privacy
@@ -129,16 +132,20 @@ bei allen gleich aus.
 
 ### Vorlagen für eigene Auswertungen
 
-Im Ordner [`vorlagen/`](vorlagen/) liegen zwei Dateien, um einen Export mit
-einer KI auszuwerten: `INSTRUCTION_RAIDANALYSE.md` (eine Analyse-Anweisung,
-die erklärt, wie die Exportdateien zu lesen sind) und `GEMINI_SKILL.md` (ein
-kurzer Skill für Google Gemini, der die Anweisung als Referenzdatei nutzt).
-Beide sind englisch. Einen Beispielbericht gibt es bewusst nicht – die
-Anweisung legt fest, was ein Bericht enthalten muss, nicht wie er aussieht.
+Im Ordner [`ai-instruction-templates/`](ai-instruction-templates/) liegen
+zwei Dateien, um einen Export mit einer KI auszuwerten:
+`RAID_ANALYSIS_INSTRUCTION.md` (eine Analyse-Anweisung, die erklärt, wie die
+Exportdateien zu lesen sind) und `GEMINI_SKILL.md` (ein kurzer Skill für
+Google Gemini, der die Anweisung als Referenzdatei nutzt). Beide sind
+englisch. Einen Beispielbericht gibt es bewusst nicht – die Anweisung legt
+fest, was ein Bericht enthalten muss, nicht wie er aussieht.
+
+Die Anweisung ist an keine bestimmte KI gebunden. Bei Claude zum Beispiel
+fügst du sie einem Projekt als Projektanweisung oder als Projektdatei hinzu.
 
 So richtest du den Skill in Gemini ein: einen neuen Skill anlegen, Name und
 Beschreibung aus dem Kopf von `GEMINI_SKILL.md` übernehmen, alles unterhalb
-des Kopfs als Anleitung einfügen und `INSTRUCTION_RAIDANALYSE.md` als
+des Kopfs als Anleitung einfügen und `RAID_ANALYSIS_INSTRUCTION.md` als
 Referenzdatei hinzufügen.
 
 ### Datenschutz
