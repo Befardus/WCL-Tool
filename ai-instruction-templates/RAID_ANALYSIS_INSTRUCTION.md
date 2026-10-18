@@ -3,9 +3,9 @@
 > As of 2026-10-18, matched to WCL Tool export **0.5.1** (0.5.0 exports
 > differ only in `meta.parses`, see there).
 > The only data source is the export of the WCL Tool.
-> Field names in this instruction are the names used since 0.5.0. Exports made with
-> version 0.4.x or older use German field and file names — translate them
-> with **Appendix A** before applying any rule.
+> Field names in this instruction are the names used since 0.5.0. Exports
+> made with version 0.4.x or older (German field and file names) are not
+> covered — see step 0.
 
 ## Role
 
@@ -68,15 +68,17 @@ explicitly requested.
 state any difference unprompted** — not only when asked.
 
 - `tool_version` missing, but `meta.werkzeug_version` present → export
-  0.3.7 to 0.4.x with German names; use Appendix A.
+  0.3.7 to 0.4.x with German names. This instruction does not cover it:
+  say so, do **not** translate field names on your own, and ask for a new
+  export made with a current tool version (or for the instruction that
+  matches the old one).
 - Neither present → the export is older than 0.3.7.
 - Older than this instruction → blocks may be missing because the version
   did not know them yet. That is **not** the same as `not_queried`.
 - Newer than this instruction → state that as well; the export's README
   then takes precedence.
 
-**Read `README_EXPORT.md` first** (in exports up to 0.4.x:
-`LIESMICH_EXPORT.md`, in German). It sits in the same folder as the export
+**Read `README_EXPORT.md` first.** It sits in the same folder as the export
 files, explains every field and every known trap, and always matches the
 version that produced it. It takes precedence over this instruction when
 both say something about the same field — this instruction says *how* to
@@ -986,57 +988,12 @@ not three sections later in the text.
 
 ---
 
-## Expected export contents
+## Export contents
 
-The tool's export puts a JSON and/or CSV version plus `README_EXPORT.md`
-into the target folder.
-
-### Files (reading order as in step 0)
-
-| Order | File | Purpose |
-|---|---|---|
-| 1 | `…__compact.json` | frame, glossary, gear, deaths — read first |
-| 2 | `…__summary.json` | aggregates per ability × phase — shows where a closer look pays off |
-| 3 | `…__<datatype>.csv` / `.json` | single events, load on purpose — CSV preferred, evaluate with code |
-| 4 | `…__full.json` | everything in one file, only if 1–3 are not available — breaks off easily |
-
-From export 0.3.9 on, `compact` and `summary` are **always** produced, also
-for a CSV-only export. From the same version on, the complete `meta` block
-is only in `…__compact.json` (and `…__full.json`); all other JSON files
-carry a slim header with `tool_version`, `constant_fields`, `time_window`,
-`pulls` and `complete_in`. Up to 0.3.8 the full block was in every JSON
-file. For the file names of exports up to 0.4.x see Appendix A.
-
-### Blocks
-
-| Block | What for | in which file |
-|---|---|---|
-| `meta` | frame: pulls, phases, time window, role, `not_queried` | `…__compact.json` (up to 0.3.8 in every JSON file) |
-| `meta.pulls[].preparation` | buffs at pull start and buffs newly appearing in combat — **not** a cooldown list (hard rule 5); `self_cast` from 0.3.9 | `…__compact.json` |
-| `meta.tool_version` | producing tool version — see step 0 for missing values | **every** JSON file |
-| `meta.parses` | placement against all kills of the spec | `…__compact.json` |
-| `meta.combat_stats` | actual values in combat (not the snapshot) | `…__compact.json` |
-| `meta.support` | outside share of damage, already correctly accounted | `…__compact.json` |
-| `meta.raid` | healing / damage / damage taken of all players | `…__compact.json` |
-| `meta.debuff_uptime` | own debuffs on enemies (union); `per_target` per enemy (from 0.3.8) | `…__compact.json` |
-| `meta.ability_limits` | what limits an ability: cooldown, proc or unclear (from 0.3.8) | `…__compact.json` |
-| `meta.own_auras_on_raid` | own auras on raid members (targets covered) | `…__compact.json` |
-| `combatantinfo` | gear, talents, sets, item effects, embellishments | only `…__compact.json` |
-| `damagedone` / `damagetaken` / `healing` | single events | `…__<datatype>.json` |
-| `casts` | cooldowns and rotation, with HP at the time; `is_keypress` (from 0.3.8) | `…__casts.json` |
-| `buffs` / `debuffs` | auras on the player | `…__buffs.json` / `…__debuffs.json` |
-| `resources` | mana/resource curve | `…__resources.json` |
-| `deaths` | error events | only `…__compact.json` |
-| `dispels` / `interrupts` | utility events | `…__dispels.json` / `…__interrupts.json` |
-| `meta.support_healing` | the same for healing | `…__compact.json` |
-| `meta.damage_waves_excluded` | what was filtered out of the waves | `…__compact.json` |
-| `boss_timeline` | boss abilities (casts) on the same time axis | `…__boss_timeline.json` |
-| `damage_waves` | when damage lands on the raid, merged | `…__damage_waves.json` |
-| `boss_auras` | buffs **and** debuffs on the enemies, with time ranges — explains empowerment windows (hard rule 16) | `…__boss_auras.json` |
-| `glossary` | descriptions of all abilities that occur | only `…__compact.json` |
-
-`…__full.json` (only if produced at export time) additionally contains all
-single-event and extra blocks from their own files, bundled.
+What the export contains — files, blocks, fields and their traps — is
+described by the `README_EXPORT.md` that comes with it, always matching its
+version. This instruction deliberately does not repeat it: a copy here would
+go stale with every tool version. The reading order is in step 0.
 
 If a block is missing, keep working, but mark in the closing section which
 statements remain uncertain — and first look in `meta.not_queried` whether
@@ -1062,109 +1019,3 @@ The reverse holds as well: a player in the top tenth of their spec is not
 described as if they had basic work ahead of them just because the
 reference log was even higher. The placement comes before the delta, in the
 text as in the assessment.
-
----
-
-## Appendix A: Names in exports up to 0.4.x (German)
-
-Exports made with WCL Tool 0.4.x or older use German names. Translate them
-with these tables before applying any rule. Raw Warcraft Logs fields
-(`unmitigatedAmount`, `hitType`, `talentTree` …), phase labels (`P1`,
-`I1`), event types and all game names are the same in both versions.
-
-**Since 0.5.0 removed:** raw fields that duplicated a German field with
-the identical value. In 0.4.x rows you may see both, e.g. `typ` and
-`type`, or `absorbiert` and `absorbed` — they carry the same value. The
-removed raw fields are `type` (where `typ` exists), `absorbed`, `stack`,
-`resourceChange`, `maxResourceAmount`, `waste`, `killingAbilityGameID`,
-and `extraAbilityGameID` in interrupts/dispels.
-
-### File names
-
-| up to 0.4.x | from 0.5.0 |
-|---|---|
-| `…__kompakt.json` | `…__compact.json` |
-| `…__uebersicht.json` | `…__summary.json` |
-| `…__komplett.json` | `…__full.json` |
-| `…__bossauren.*` | `…__boss_auras.*` |
-| `…__bosszeitleiste.*` | `…__boss_timeline.*` |
-| `…__schadenswellen.*` | `…__damage_waves.*` |
-| `…__glossar.csv` | `…__glossary.csv` |
-| `…__raidauren.csv` | `…__raid_auras.csv` |
-| `LIESMICH_EXPORT.md` | `README_EXPORT.md` |
-| pull part `__gemischt-<n>pulls` | `__mixed-<n>pulls` |
-
-### Fixed values
-
-| field (old → new) | old → new values |
-|---|---|
-| `werte_von` → `stats_from` | `spieler` → `player`, `begleiter` → `pet` |
-| `art` → `kind` | `zugewinn` → `gain`, `stand` → `snapshot`, `abklingzeit` → `cooldown`, `unklar` → `unclear`, `phasen` → `phases`, `sekunden` → `seconds` (`proc`, `buff`, `debuff` unchanged) |
-| `rolle` → `role` | `schaden` → `damage`, `heilung` → `healing`, `beides` → `both` |
-| `bereich` → `section` (CSV) | `ausruestung` → `gear`, `verlauf` → `history`, `schaden` → `damage`, `heilung` → `healing`, `erlittener_schaden` → `damage_taken` |
-| `nicht_abgefragt` → `not_queried` | entries are block names, translated with the field table (`raid.schaden` → `raid.damage`) |
-| any name | `unbekannt (N)` → `unknown (N)` |
-| `verzauberung_name` → `enchant_name` | `KEINE (verzaubert bei X von Y Spielern in diesem Log)` → `NONE (enchanted on X of Y players in this log)` |
-
-### Field names
-
-| up to 0.4.x | from 0.5.0 | up to 0.4.x | from 0.5.0 | up to 0.4.x | from 0.5.0 |
-|---|---|---|---|---|---|
-| `ab_teilen` | `pieces_required` | `abdeckung_ziel_sekunden` | `target_seconds` | `abdeckung_ziel_sekunden_im_fenster` | `target_seconds_in_window` |
-| `abklingzeit_s` | `cooldown_s` | `absorbiert` | `absorbed` | `absorbiert_offen` | `absorb_remaining` |
-| `absorbiert_summe` | `absorbed_total` | `abstand_max_s` | `gap_max_s` | `abstand_median_s` | `gap_median_s` |
-| `abstand_min_s` | `gap_min_s` | `aenderung` | `change` | `aktiv` | `active` |
-| `aktive_auren` | `active_auras` | `aktive_auren_bei_beginn` | `active_auras_at_start` | `aktive_auren_ids` | `active_aura_ids` |
-| `aktive_zeit_ms` | `active_time_ms` | `aktive_zeit_s` | `active_time_s` | `angriffskraft` | `attack_power` |
-| `anwendungen` | `applications` | `anzahl` | `count` | `art` | `kind` |
-| `auch_in_wellen` | `also_in_waves` | `auren` | `auras` | `begruendung` | `reason` |
-| `bei_pull_beginn` | `at_pull_start` | `bereich` | `section` | `beschreibung` | `description` |
-| `bester_wert` | `best_value` | `betrag` | `amount` | `betrag_median` | `amount_median` |
-| `betrag_summe` | `amount_total` | `bis_s` | `to_s` | `boni` | `bonuses` |
-| `bossauren` | `boss_auras` | `bosszeitleiste` | `boss_timeline` | `datum` | `date` |
-| `dauer_s` | `duration_s` | `eigene_auren_im_raid` | `own_auras_on_raid` | `embellishments_anzahl` | `embellishment_count` |
-| `entfernte_faehigkeit` | `removed_ability` | `entfernte_faehigkeit_id` | `removed_ability_id` | `equip_effekt` | `equip_effect` |
-| `ereignisse` | `events` | `erhalten_von` | `received_from` | `erlittener_schaden` | `damage_taken` |
-| `erstes_s` | `first_s` | `erzeugt_von` | `generated_by` | `faehigkeit` | `ability` |
-| `faehigkeit_id` | `ability_id` | `faehigkeitsgrenzen` | `ability_limits` | `fenster_dauer_s` | `window_duration_s` |
-| `gefilterte_datentypen` | `filtered_data_types` | `gegeben_an` | `given_to` | `gegenstandsstufe` | `item_level` |
-| `gesamt` | `total` | `gesamtzeit_ms` | `total_time_ms` | `gesamtzeit_s` | `total_time_s` |
-| `gewertet_mit_support` | `scored_with_support` | `gewertet_ohne_support` | `scored_without_support` | `glossar` | `glossary` |
-| `groesster_treffer` | `largest_hit` | `grund` | `reason` | `heilung` | `healing` |
-| `hinweis` | `note` | `hp_prozent` | `hp_pct` | `ilvl_laut_tooltip` | `ilvl_from_tooltip` |
-| `im_kampf_genutzt` | `used_in_combat` | `ist_dieser_export` | `is_this_export` | `ist_intermission` | `is_intermission` |
-| `ist_tastendruck` | `is_keypress` | `je_ziel` | `per_target` | `kampfwerte` | `combat_stats` |
-| `kills_gesamt` | `kills_total` | `klasse` | `class` | `konstante_felder` | `constant_fields` |
-| `krit` | `crit` | `krit_anteil` | `crit_share` | `letztes_s` | `last_s` |
-| `max_wert` | `max_value` | `median_perzentil` | `median_percentile` | `metrik` | `metric` |
-| `metriken` | `metrics` | `momentaufnahme_combatantinfo` | `combatantinfo_snapshot` | `nicht_abgefragt` | `not_queried` |
-| `nicht_zuordenbar` | `unattributable` | `ohne_begleiter` | `without_pets` | `ohne_parse` | `without_parse` |
-| `perzentil_bracket` | `percentile_bracket` | `perzentil_heute` | `percentile_today` | `perzentil_historisch` | `percentile_historical` |
-| `phasen` | `phases` | `proc_pruefung_moeglich` | `proc_check_possible` | `pull_dauer_ms` | `pull_duration_ms` |
-| `quelle` | `source` | `quelle_name` | `source_name` | `rang` | `rank` |
-| `reichweite_yd` | `range_yd` | `report_titel` | `report_title` | `ressource` | `resource` |
-| `rolle` | `role` | `schaden` | `damage` | `schaden_summe` | `damage_total` |
-| `schadenswellen` | `damage_waves` | `schadenswellen_ausgeschlossen` | `damage_waves_excluded` | `schnitt_perzentil` | `average_percentile` |
-| `schwierigkeit` | `difficulty` | `schwierigkeit_name` | `difficulty_name` | `seit_s` | `since_s` |
-| `selbst_gewirkt` | `self_cast` | `selbst_gewirkt_pruefbar` | `self_cast_checkable` | `slot_oder_name` | `slot_or_name` |
-| `sockel_namen` | `gem_names` | `spez` | `spec` | `spezialisierung` | `spec` |
-| `spieler` | `player` | `stand` | `current` | `support_erhalten` | `support_received` |
-| `support_gegeben` | `support_given` | `support_heilung` | `support_healing` | `tastendruecke` | `keypresses` |
-| `teile` | `pieces` | `todeszeitpunkt` | `death_time` | `toedliche_faehigkeit` | `killing_ability` |
-| `toedliche_faehigkeit_id` | `killing_ability_id` | `toedliche_quelle` | `killing_source` | `treffer` | `hits` |
-| `typ` | `type` | `ueberheilung` | `overheal` | `ueberheilung_anteil` | `overheal_share` |
-| `ueberheilung_summe` | `overheal_total` | `uebersicht` | `summary` | `unterbrochene_faehigkeit` | `interrupted_ability` |
-| `unterbrochene_faehigkeit_id` | `interrupted_ability_id` | `uptime_im_fenster_ms` | `uptime_in_window_ms` | `uptime_im_fenster_prozent` | `uptime_in_window_pct` |
-| `uptime_im_fenster_s` | `uptime_in_window_s` | `uptime_prozent` | `uptime_pct` | `use_effekt` | `use_effect` |
-| `verlauf` | `history` | `verschwendet` | `wasted` | `verzauberung_name` | `enchant_name` |
-| `vielseitigkeit` | `versatility` | `vollstaendig_in` | `complete_in` | `von_parses` | `of_parses` |
-| `von_parses_heute` | `of_parses_today` | `von_s` | `from_s` | `vorbereitung` | `preparation` |
-| `werkzeug_version` | `tool_version` | `wert` | `value` | `werte_von` | `stats_from` |
-| `wirkzeit_s` | `cast_time_s` | `zauberkraft` | `spell_power` | `zeilen` | `rows` |
-| `zeit_in_pull_s` | `time_in_pull_s` | `zeitfenster` | `time_window` | `zeitfenster_beruecksichtigt` | `time_window_applied` |
-| `zeitpunkte_s` | `times_s` | `zeitraeume` | `intervals` | `ziel` | `target` |
-| `ziel_hp` | `target_hp` | `ziel_hp_max` | `target_hp_max` | `ziel_hp_prozent` | `target_hp_pct` |
-| `ziele` | `targets` | `ziele_fehler` | `targets_error` | `ziele_gekuerzt` | `targets_truncated` |
-| `ziele_gesamt` | `targets_total` | `ziele_gleichzeitig_mittel` | `concurrent_targets_avg` | `ziele_gleichzeitig_mittel_im_fenster` | `concurrent_targets_avg_in_window` |
-| `ziele_gleichzeitig_spitze` | `concurrent_targets_peak` | `ziele_gleichzeitig_spitze_im_fenster` | `concurrent_targets_peak_in_window` | `ziele_insgesamt` | `targets_total` |
-| `zuordnung_sicher` | `match_certain` |  |  |  |  |
