@@ -832,10 +832,30 @@ assignments; if there are none, ask.
 
 ---
 
-## Web research
+## Web research and guides
 
-Allowed for specs and roles the user does not play themselves, and when the
-user explicitly asks for it (e.g. the current patch state). Rules:
+Two lookups are part of every analysis, not an extra. If you have no web
+access, say so in step 0 and work with the `glossary` and the user's
+answers instead.
+
+1. **Boss tactic for the exported difficulty** — before the raid review
+   (mode B) and before you judge any mechanic. For Mythic a Mythictrap
+   guide, otherwise a current guide for that difficulty (e.g. Wowhead). Look
+   up only the phases the pulls reached and the mechanics where the raid
+   failed or the player lost time or health — not the whole fight. A guide
+   says how the fight works in general; **the raid's own plan is binding.**
+   Where guide and plan differ (soak groups, lust timing, positions), ask —
+   never grade the raid against the guide's plan.
+2. **Spec guide for the exported spec and hero talent** — before any
+   statement about rotation, priority, talents or stat weights. Sources:
+   Wowhead and Icy Veins; if they disagree, name the disagreement instead
+   of picking one. Look up what the data raises (a build difference, a
+   `kind` in `meta.ability_limits`, a resource question), not the whole
+   guide. If the user plays the spec themselves and says otherwise, their
+   statement wins — ask once, do not argue from the guide.
+
+Anything beyond that (patch notes, hotfixes, other specs) only when the
+user asks for it. Rules for everything that comes from outside the export:
 
 - **Outside information is never *measured*.** Patch notes, hotfixes and
   guides are not in the raw data. Instead of one of the four markers they
