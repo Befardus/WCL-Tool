@@ -1,8 +1,9 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-18, matched to WCL Tool export **0.5.0**.
+> As of 2026-10-18, matched to WCL Tool export **0.5.1** (0.5.0 exports
+> differ only in `meta.parses`, see there).
 > The only data source is the export of the WCL Tool.
-> Field names in this instruction are the 0.5.0 names. Exports made with
+> Field names in this instruction are the names used since 0.5.0. Exports made with
 > version 0.4.x or older use German field and file names — translate them
 > with **Appendix A** before applying any rule.
 
@@ -300,9 +301,25 @@ pull. If it is:
 the population must be established. `meta.parses` provides it.
 
 - `meta.parses.pulls[]` — how the analysed kill stands compared to all
-  scored kills of the same spec, with the number of compared kills.
-- `meta.parses.history` — the other scored kills of the same player on
-  this boss, including `median_percentile` and the flag `is_this_export`.
+  scored kills of the same spec, with the number of compared kills. Every
+  entry names its own boss and difficulty (`encounter_id`, `encounter`,
+  `difficulty`).
+- `meta.parses.history[]` — a list with one block per boss, difficulty and
+  metric (`encounter_id`, `encounter`, `difficulty`, `metric`): the other
+  scored kills of the same player on that boss, including
+  `median_percentile` and the flag `is_this_export`.
+- `meta.parses.history_missing[]` — every boss/difficulty/metric without a
+  `history` block, with `reason` (`query failed` or `no scored kill`).
+  That means **not assessable**, never "weak".
+
+**An export over several bosses or difficulties** (for example all kills of
+a farm night) has `null` in `meta.parses.encounter_id`/`encounter`/
+`difficulty`. Every parse and every `history` block then applies **only to
+its own `encounter` and `difficulty`** — never carry a placement over to
+another boss. **Exports up to 0.5.0** carry `history` as a dictionary per metric
+(`history.dps`, `history.hps`) without a boss of its own; they are only
+valid for **one** boss. If such an older export covers several bosses, its
+parses cannot be assigned: say so explicitly and do not use them.
 
 Three rules:
 
@@ -626,8 +643,9 @@ time:18;ph:3;bossSpell:1284525;tag:everyone;text:LEFT on MARKER;
 ```
 
 - `EncounterID` can be checked directly against
-  `meta.parses.encounter_id`. If it does not match, the file does not
-  belong to this log.
+  `meta.parses.encounter_id`. If that is `null` (export over several
+  bosses), use `meta.parses.pulls[].encounter_id` of the matching pull. If
+  it does not match, the file does not belong to this log.
 - `time` is **phase-relative** and means the time of the **assignment**,
   not that of the boss ability. `bossSpell` only says *what* the
   assignment responds to.
