@@ -17,9 +17,9 @@ performance reports from them.
 2. Read the `README_EXPORT.md` that comes with the export. It explains
    every field for exactly this export version and takes precedence over
    the instruction on what a field means. Exports made with WCL Tool 0.4.x
-   or older come with a German `LIESMICH_EXPORT.md` instead and use German
-   field and file names — translate them with Appendix A of the
-   instruction before applying any rule.
+   or older (German `LIESMICH_EXPORT.md`, German field names) are not
+   covered: say so and ask for a new export instead of translating names
+   yourself.
 3. Answer in the language the user writes in.
 
 ## Reading order of the export files
