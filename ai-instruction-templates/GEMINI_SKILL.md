@@ -1,6 +1,6 @@
 ---
 name: wcl-raid-analyst
-description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV/JSON event files, README_EXPORT.md) or asks for a raid, player or healer performance analysis based on them.
+description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV event files, README_EXPORT.md) or asks for a raid, player or healer performance analysis based on them.
 ---
 
 # WCL Raid Analyst
@@ -24,12 +24,23 @@ performance reports from them.
 
 ## Reading order of the export files
 
-1. `…__compact.json` — completely, before calculating anything.
+Since export 0.6.0 an export is a fixed set of at most 10 files.
+
+1. `…__compact.json` — completely, before calculating anything. It also
+   holds the small event blocks (`boss_timeline`, `damage_waves`,
+   `debuffs`, `dispels`, `interrupts`). `glossary` and these blocks are
+   tables: `{"columns": [...], "rows": [[...]]}`, read each row against
+   `columns`; `null` = field not present. `combatantinfo` is a list of
+   setups: shared gear/talents/stats once, per-pull data under `pulls`.
 2. `…__summary.json`
-3. Event files only on purpose. Prefer CSV and evaluate it with code, do
-   not read it into the context.
-4. `…__full.json` only if nothing else is available. If it is truncated,
-   everything beyond the cut is not assessable.
+3. The CSV files (damagedone, damagetaken, healing, casts, buffs,
+   resources, boss_auras) only on purpose. Evaluate them with code, do not
+   read them into the context.
+4. Exports up to 0.5.3 write these blocks as lists of objects and
+   `combatantinfo` once per pull; they can also have event JSON files and a
+   `…__full.json`. Prefer the CSV there too; use `…__full.json` only if
+   nothing else is available. If it is truncated, everything beyond the
+   cut is not assessable.
 
 ## What must never happen
 
