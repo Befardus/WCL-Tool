@@ -1,7 +1,10 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-18, matched to WCL Tool export **0.5.1** (0.5.0 exports
-> differ only in `meta.parses`, see there).
+> As of 2026-10-19, matched to WCL Tool export **0.5.3** (0.5.2 exports are
+> identical in content). Exports up to 0.5.1 count keypresses of spells
+> with a cast time twice (see `is_keypress`) and have no `meta.parses` at
+> all when they contain only wipes; 0.5.0 exports also differ in
+> `meta.parses`, see there.
 > The only data source is the export of the WCL Tool.
 > Field names in this instruction are the names used since 0.5.0. Exports
 > made with version 0.4.x or older (German field and file names) are not
@@ -158,6 +161,16 @@ pull. If it is:
    45 rows, **15** actual presses. **For every count use only rows with
    `is_keypress = true`.** Counting all rows overestimates such abilities
    threefold. In `summary.json`, `keypresses` stands next to `casts`.
+   **Exports up to 0.5.1** also mark the `cast` row that completes a
+   `begincast` of the same spell (column `type`) as a keypress, so spells
+   with a cast time count up to twice and their gaps in
+   `meta.ability_limits` can look "unclear". There, count a cast-time spell
+   by its `cast` rows; a cancelled cast is only a `begincast` with no
+   `cast` of the same spell after it — never conclude cancellations from
+   the doubled count (a real analysis read "17 of 35 casts cancelled"
+   where none was). From 0.5.2 the completing `cast` is
+   `is_keypress = false`; a `begincast` without a following `cast` still
+   counts as a (cancelled) press.
 
    **In older exports check by hand** — both from the export, without an
    outside source:
