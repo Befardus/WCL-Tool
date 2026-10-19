@@ -1,6 +1,8 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-19, matched to WCL Tool export **0.5.3**. Exports up to
+> As of 2026-10-19, matched to WCL Tool export **0.6.0**. Exports up to
+> 0.5.3 have a different file set (event blocks also as JSON files, a
+> `…__full.json`, small duplicate CSVs) — see step 0. Exports up to
 > 0.5.2 count effects the player did not press (rows with `fake`, e.g.
 > *Shadowy Apparition*, *Soul Fragment*) as keypresses; exports up to
 > 0.5.1 also count keypresses of spells with a cast time twice (see
@@ -48,25 +50,39 @@ explicitly requested.
 
 ## Step 0: What is actually available?
 
-**Binding reading order of the export files:**
+**Binding reading order of the export files** (since export 0.6.0 a
+fixed set of at most 10 files: `README_EXPORT.md`, `compact.json`,
+`summary.json` and up to seven CSV files):
 
-1. `…__compact.json` — frame, glossary, gear, deaths. Read completely
-   before calculating anything.
+1. `…__compact.json` — frame, glossary, gear, deaths, and the small event
+   blocks `boss_timeline`, `damage_waves`, `debuffs`, `dispels`,
+   `interrupts`. Read completely before calculating anything. Since 0.6.0
+   `glossary` and the event blocks are tables
+   (`{"columns": [...], "rows": [[...]]}` — a missing field is `null`), and
+   `combatantinfo` is a list of setups: what is equal across pulls stands
+   once, the per-pull part (`fight_id`, `pull_nr`, `auras` …) is under
+   `pulls`. Several setups mean gear, talents or stats changed between
+   pulls. The README explains both with an example.
 2. `…__summary.json` — aggregates per ability × phase. Tells you **where**
    a closer look pays off.
-3. Event files — only on purpose, for questions that need individual
-   events; do not load them on suspicion. If the CSV version is available
-   (`…__<datatype>.csv`), it is the better choice: about a fifth of the
-   size, and events are best **evaluated with code**, not read into the
-   context. **From export 0.3.9 on** the CSV carries the same reliable
-   fields as the JSON. In older exports it lacks `unmitigatedAmount`,
-   `mitigated` and `stats_from` — for rule 16 and the combat-stat
-   attribution, use the JSON version there.
-4. `…__full.json` — only if 1–3 are not available. It gets truncated
-   easily, and up to export 0.3.8 the glossary sits **at the very end** —
-   it is then the first thing to be lost (in a real test this produced two
-   wrong recommendations, both caused by the missing glossary). If the file
-   was truncated, rule 6 applies.
+3. The CSV files (`…__damagedone.csv`, `damagetaken`, `healing`, `casts`,
+   `buffs`, `resources`, `boss_auras`) — only on purpose, for questions
+   that need individual events; do not load them on suspicion. Events are
+   best **evaluated with code**, not read into the context.
+
+**Exports up to 0.5.3** write these blocks as lists of objects and
+`combatantinfo` as one full entry per pull. They can also contain every
+event block as its own `.json` file, a `…__full.json` and small CSV files that repeat content of
+`compact.json`. Use the same order there; take an event block as CSV if
+available. **From export 0.3.9 on** the CSV carries the same reliable
+fields as the JSON; in older exports it lacks `unmitigatedAmount`,
+`mitigated` and `stats_from` — for rule 16 and the combat-stat
+attribution, use the JSON version there. Use `…__full.json` only if
+nothing else is available: it gets truncated easily, and up to export
+0.3.8 the glossary sits **at the very end** — it is then the first thing
+to be lost (in a real test this produced two wrong recommendations, both
+caused by the missing glossary). If the file was truncated, rule 6
+applies.
 
 **Compare `meta.tool_version` with the version of this instruction and
 state any difference unprompted** — not only when asked.
@@ -108,7 +124,7 @@ pull. If it is:
   start event in the data. **Before** you write "had no cooldowns up",
   look there.
 - `combatantinfo` is never trimmed — gear, talents and sets are always
-  complete.
+  complete (from 0.6.0 grouped into setups, see step 0).
 
 ---
 
@@ -176,7 +192,8 @@ pull. If it is:
    press, such as *Shadowy Apparition*, *Soul Fragment* or the second row
    of every *Shuriken Storm*. There, never count `fake` rows; an ability
    with only such rows is not a button. From 0.5.3 they are
-   `is_keypress = false`.
+   `is_keypress = false`; from 0.6.0 `casts.csv` has the column `fake`
+   (`True`, otherwise empty).
 
    **In older exports check by hand** — both from the export, without an
    outside source:
@@ -409,7 +426,8 @@ line: "four further differences without throughput effect: …". The key
 statement — whether a build difference can explain the gap — must be in the
 first sentence, not something to be inferred from the table.
 
-`combatantinfo` contains everything needed with resolved names: gear with
+`combatantinfo` (one entry per setup, from 0.6.0) contains everything
+needed with resolved names: gear with
 enchants, gems, set membership, `equip_effect`/`use_effect` with
 **evaluated** values, as well as `embellishment` and `embellishment_count`.
 Embellishments are easily overlooked when skimming and are a real
@@ -804,8 +822,8 @@ This makes threshold questions answerable: after dropping below 50% or 30%,
 was a healthstone or potion used within one GCD? `casts` and `damagetaken`
 are on the same time axis.
 
-On `healing` rows, `target_hp*` belongs to the **healed target**, not to the
-exported player. Likewise the combat stats there can belong to the target —
+On `healing` rows, `target_hp_pct` belongs to the **healed target**, not to
+the exported player. Likewise the combat stats there can belong to the target —
 `stats_from` tells you which. Never average them unchecked.
 
 **D4. Deaths.** Time, killing ability, available unused options, and
