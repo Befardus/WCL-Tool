@@ -1,10 +1,11 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-19, matched to WCL Tool export **0.5.3** (0.5.2 exports are
-> identical in content). Exports up to 0.5.1 count keypresses of spells
-> with a cast time twice (see `is_keypress`) and have no `meta.parses` at
-> all when they contain only wipes; 0.5.0 exports also differ in
-> `meta.parses`, see there.
+> As of 2026-10-19, matched to WCL Tool export **0.5.3**. Exports up to
+> 0.5.2 count effects the player did not press (rows with `fake`, e.g.
+> *Shadowy Apparition*, *Soul Fragment*) as keypresses; exports up to
+> 0.5.1 also count keypresses of spells with a cast time twice (see
+> `is_keypress`) and have no `meta.parses` at all when they contain only
+> wipes; 0.5.0 exports also differ in `meta.parses`, see there.
 > The only data source is the export of the WCL Tool.
 > Field names in this instruction are the names used since 0.5.0. Exports
 > made with version 0.4.x or older (German field and file names) are not
@@ -170,7 +171,12 @@ pull. If it is:
    the doubled count (a real analysis read "17 of 35 casts cancelled"
    where none was). From 0.5.2 the completing `cast` is
    `is_keypress = false`; a `begincast` without a following `cast` still
-   counts as a (cancelled) press.
+   counts as a (cancelled) press. **Exports up to 0.5.2** also mark rows
+   with `fake: true` (JSON) as keypresses — effects the player did not
+   press, such as *Shadowy Apparition*, *Soul Fragment* or the second row
+   of every *Shuriken Storm*. There, never count `fake` rows; an ability
+   with only such rows is not a button. From 0.5.3 they are
+   `is_keypress = false`.
 
    **In older exports check by hand** — both from the export, without an
    outside source:
