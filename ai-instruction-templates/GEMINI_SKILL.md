@@ -32,6 +32,9 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
    tables: `{"columns": [...], "rows": [[...]]}`, read each row against
    `columns`; `null` = field not present. `combatantinfo` is a list of
    setups: shared gear/talents/stats once, per-pull data under `pulls`.
+   Since export 0.8.2 `compact.json` also has `raid_deaths`: all players'
+   deaths, with `before_wipe_cascade` (true = before the raid started
+   wiping).
 2. `…__summary.json`
 3. The CSV files (damagedone, damagetaken, healing, casts, buffs,
    resources, boss_auras) only on purpose. Evaluate them with code, do not
