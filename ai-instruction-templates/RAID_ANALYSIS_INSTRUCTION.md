@@ -657,6 +657,14 @@ over several pulls, it is a mechanic problem of the raid and not a sum of
 individual mistakes — that distinction is exactly the purpose of this
 mode.
 
+Use `raid_deaths` in `compact.json` (every player's deaths in the exported
+pulls; exports from 0.8.2 on). Judge only deaths with
+`before_wipe_cascade = true` as individual mistakes — `false` deaths
+happened while the raid was already wiping. If the same `killing_ability`
+kills several players before the cascade over several pulls, it is a raid
+mechanic problem. `dead_player` is the one who died; `player` is the
+exported player.
+
 **B6. Individual players only at the end**, and only if B2–B5 point to
 them. For a named player the role-specific chain then applies; without
 their own export the statement stays rough and is labelled as rough.
@@ -829,6 +837,11 @@ the exported player. Likewise the combat stats there can belong to the target �
 **D4. Deaths.** Time, killing ability, available unused options, and
 whether the death was in the scored part. For a death outside the scoring,
 make both statements: no effect on the parse, but an effect on the kill.
+
+Place the player's death in `raid_deaths` (exports from 0.8.2 on): its
+`death_nr` and `before_wipe_cascade` say whether it was an early individual
+death or part of the wipe. A death in the cascade is not a mistake of this
+player by itself.
 
 **D5. Comparison with the reference log — only limited.** Admissible only
 for damage sources both players took, typically raid-wide abilities.
