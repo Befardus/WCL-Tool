@@ -643,6 +643,14 @@ lengths, comp from `meta.raid` (names, classes, ilvl).
 the wipe times: at which boss ability or in which phase do the attempts
 break off? A wipe series usually has a common spot.
 
+`boss_timeline.hp_pct` is the health of the CASTER at the moment of its
+spell, in percent of its CURRENT maximum (it changes between phases, bosses
+can heal). Use it for "how far from the next phase was the boss when
+ability X came?": take the `hp_pct` of that cast row, never estimate values
+between two casts as facts. `null` = unknown, `0.0` = held at 1 HP during a
+transition. The end status of a pull is `meta.pulls[].boss_hp_pct_end`; with
+several bosses it is their COMBINED health, not one boss's.
+
 **B3. Distribute the damage load.** `meta.raid.damage_taken` per player,
 normalised to fight length. What stands out is not the highest value (that
 is usually the tank) but who falls out of line **against their role** — a
@@ -819,7 +827,7 @@ Phrase findings as an **event pair**, not as a count: "at 477.7 s a hit of
 casts".
 
 **D3. Health and consumables.** `hp`, `hp_max` and `hp_pct` are on the
-`damagetaken` and `casts` rows.
+`damagetaken` and `casts` rows (for enemy health see `boss_timeline.hp_pct`).
 
 > `hp_pct` is the value **at the time of the event** — not a difference and
 > not "afterwards". A hit can report a higher value than the previous one
