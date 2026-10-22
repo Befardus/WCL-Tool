@@ -34,7 +34,10 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
    setups: shared gear/talents/stats once, per-pull data under `pulls`.
    Since export 0.8.2 `compact.json` also has `raid_deaths`: all players'
    deaths, with `before_wipe_cascade` (true = before the raid started
-   wiping).
+   wiping). `boss_timeline.hp_pct` is the caster's health at each enemy
+   spell, in percent of its CURRENT maximum; never estimate values between
+   two casts. `meta.pulls[].boss_hp_pct_end` is the end status, with several
+   bosses their COMBINED health.
 2. `…__summary.json`
 3. The CSV files (damagedone, damagetaken, healing, casts, buffs,
    resources, boss_auras) only on purpose. Evaluate them with code, do not
