@@ -1,6 +1,14 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-19, matched to WCL Tool export **0.6.0**. Exports up to
+> As of 2026-10-24, matched to WCL Tool export **0.8.4**. Exports up to
+> 0.8.3 count the release of an empowered spell as a second keypress and
+> the spells released by *Stasis* as keypresses (see `is_keypress`), name
+> the README just `README_EXPORT.md` and carry an unexplained
+> `without_pets` in `meta.support_healing` (ignore it). Exports up to
+> 0.8.2 have no `hp_pct` in `boss_timeline` and no
+> `meta.pulls[].boss_hp_pct_end`/`fight_progress_pct`; exports up to 0.8.1
+> have no `raid_deaths`. A missing block or field means "not in this
+> export" (not assessable), never "nothing happened". Exports up to
 > 0.5.3 have a different file set (event blocks also as JSON files, a
 > `…__full.json`, small duplicate CSVs) — see step 0. Exports up to
 > 0.5.2 count effects the player did not press (rows with `fake`, e.g.
@@ -51,7 +59,7 @@ explicitly requested.
 ## Step 0: What is actually available?
 
 **Binding reading order of the export files** (since export 0.6.0 a
-fixed set of at most 10 files: `README_EXPORT.md`, `compact.json`,
+fixed set of at most 10 files: `…__README_EXPORT.md`, `compact.json`,
 `summary.json` and up to seven CSV files):
 
 1. `…__compact.json` — frame, glossary, gear, deaths, and the small event
@@ -98,7 +106,8 @@ state any difference unprompted** — not only when asked.
 - Newer than this instruction → state that as well; the export's README
   then takes precedence.
 
-**Read `README_EXPORT.md` first.** It sits in the same folder as the export
+**Read `…__README_EXPORT.md` first** (same name prefix as the other files;
+up to export 0.8.3 just `README_EXPORT.md`). It sits in the same folder as the export
 files, explains every field and every known trap, and always matches the
 version that produced it. It takes precedence over this instruction when
 both say something about the same field — this instruction says *how* to
@@ -152,6 +161,13 @@ pull. If it is:
    project knowledge base) or web research (rules below). Otherwise: say
    that it is missing.
 
+   The glossary descriptions are Wowhead's tooltip text. For new boss
+   abilities that text can be incomplete **at the source** (measured:
+   *Venom Rupture* "inflicting 10 sec.", *Grim Guillotine* "…of the
+   target2 min and…"). A sentence that breaks off is incomplete, not an
+   export error: say "text incomplete at Wowhead", never complete it from
+   memory.
+
    **Cooldowns are often not in the glossary** — the tooltip source
    regularly omits them for talent-modified spells (measured: only 143 of
    1,162 tooltips name one). The procedure then is: use the **smallest
@@ -194,6 +210,15 @@ pull. If it is:
    with only such rows is not a button. From 0.5.3 they are
    `is_keypress = false`; from 0.6.0 `casts.csv` has the column `fake`
    (`True`, otherwise empty).
+   **Exports up to 0.8.3** also count, for empowered spells (`type`
+   `empowerstart` → `cast` → `empowerend`, e.g. Evoker *Dream Breath*,
+   *Fire Breath*), the `empowerend` as a second press whenever the spell
+   was charged longer than 1 s, and the three spells released by *Stasis*
+   as presses (measured: *Dream Breath* 54 instead of 25, *Temporal
+   Anomaly* 39 instead of 33). There, count empowered spells by
+   `empowerstart` plus casts without one (instant via *Tip the Scales*),
+   and do not count the copies within 1.5 s after a *Stasis (Release)*.
+   From 0.8.4 both are `is_keypress = false`.
 
    **In older exports check by hand** — both from the export, without an
    outside source:
@@ -506,6 +531,31 @@ overall assessment.
    of them are the actual DoTs, the glossary tells you.
 3. Cooldown economy: uses per CD, theoretical maximum at this fight length,
    alignment of the CDs with each other and with burst windows.
+
+   **Sync of cooldowns with different lengths.** The strongest burst is
+   often not the long cooldown alone (e.g. 2 min) but the long one together
+   with shorter ones (e.g. 1 min) that the chosen talents tie to it — read
+   the glossary texts of the talents in `combatantinfo`. For every burst
+   window (each use of the long CD, above all where the boss takes more
+   damage or the raid has lust):
+   - list which shorter CDs landed inside, as an offset to the long one
+     (e.g. "Halo +8.0 s after Voidform");
+   - a short CD that lands several seconds after the start of the window is
+     a finding, even if every single gap looked harmless;
+   - trace the delay back: the drift usually starts one or two casts
+     earlier (a cast 6–8 s late in the previous phase pushes the next one
+     past the window). Name that earlier cast as the lever;
+   - gaps that each "coincide with mechanics" do not close the question —
+     what counts is their combined effect on the next window;
+   - before recommending to hold a short CD for the window, count its uses
+     over the fight length: holding is only right if no use is lost.
+
+   Measured example (2026-10-22, Shadow Priest Archon, three Mythic pulls):
+   Halo landed 8.0 and 10.7 s after Voidform in the strongest window of two
+   pulls, because the Halo before it in P2 came 6–8 s late; Power Surge,
+   Resonant Energy and Sustained Potency tie Halo to Voidform. Two reports
+   missed it, one judged the Halo gaps one by one and called it "no
+   finding".
 4. Ability breakdown: delta per ability, split into more casts / higher
    average / better buff overlap. If a gap per event remains, **check it
    against `meta.combat_stats` first** before execution is considered as a
@@ -966,6 +1016,40 @@ These three rules change **nothing** about the content, the four markers or
 the duty to name uncertainty. They only change the order and how much
 context surrounds it.
 
+### Structure of an HTML report
+
+Applies whenever the report is delivered as a standalone HTML file (a
+download, a canvas, an artifact). A Markdown report in the chat keeps the
+pull links (rule 2) and skips the rest.
+
+1. **Topic tabs.** One tab per topic (e.g. overview, phases, cooldowns,
+   survivability, wipes, levers). The first tab carries the key statement
+   and the data basis. The **last tab is always "Glossary"**. The file works
+   offline: no external scripts, fonts or images; a small inline script for
+   the tabs is fine.
+2. **Pull links.** Every pull is clickable where it is first named in the
+   header and in each tab:
+   `https://www.warcraftlogs.com/reports/<meta.report_code>#fight=<fight_id>`,
+   opening in a new tab. The link text names the pull as the raid knows it
+   (pull number of the night), not only the fight ID.
+3. **Clickable abilities.** Every ability name in the text links to its
+   glossary entry (`<a href="#ab-<ability_id>">`). Following such a link
+   switches to the glossary tab and scrolls to the entry; the browser's back
+   button returns to the place in the report. The half-sentence explanation
+   from readability rule 1 stays in the text — the glossary adds detail, it
+   does not replace the explanation.
+4. **Glossary tab.** Only abilities that appear in the report, sorted
+   alphabetically, one entry each with the id `ab-<ability_id>`: name, the
+   `description` from the export's `glossary`, `cooldown_s` and
+   `cast_time_s` where present, and a small link
+   `https://www.wowhead.com/spell=<ability_id>`. An ability that is not in
+   the export's `glossary` gets an entry with the Wowhead link and "not in
+   the export" — never a description from memory. The descriptions are taken
+   over, not rewritten.
+5. **Size.** The glossary and the links must not push the report past the
+   output limit: only abilities from the report, reusable CSS classes, no
+   repeated inline styles.
+
 ### Coaching mode
 
 1. **Header:** role and spec, the relevant metric, the **placement**
@@ -1069,7 +1153,7 @@ not three sections later in the text.
 ## Export contents
 
 What the export contains — files, blocks, fields and their traps — is
-described by the `README_EXPORT.md` that comes with it, always matching its
+described by the `…__README_EXPORT.md` that comes with it, always matching its
 version. This instruction deliberately does not repeat it: a copy here would
 go stale with every tool version. The reading order is in step 0.
 
