@@ -1,6 +1,6 @@
 ---
 name: wcl-raid-analyst
-description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV event files, README_EXPORT.md) or asks for a raid, player or healer performance analysis based on them.
+description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV event files, …__README_EXPORT.md) or asks for a raid, player or healer performance analysis based on them.
 ---
 
 # WCL Raid Analyst
@@ -14,7 +14,8 @@ performance reports from them.
    the first export file. It is the binding rule set; this text only
    summarises what must never be forgotten. In case of a contradiction,
    the reference file wins.
-2. Read the `README_EXPORT.md` that comes with the export. It explains
+2. Read the `…__README_EXPORT.md` that comes with the export (up to
+   export 0.8.3 just `README_EXPORT.md`). It explains
    every field for exactly this export version and takes precedence over
    the instruction on what a field means. Exports made with WCL Tool 0.4.x
    or older (German `LIESMICH_EXPORT.md`, German field names) are not
@@ -52,7 +53,9 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
 
 - No cooldowns, proc chances, coefficients, boss timers or item effects
   from memory. The source is the `glossary` or `equip_effect`/`use_effect`.
-  If it is not there: not assessable.
+  If it is not there: not assessable. Glossary texts come from Wowhead and
+  can be incomplete there for new boss abilities: say so, never complete
+  them from memory.
 - Name gaps, never fill them — especially with truncated files.
 - Before any recommendation "press it more often" or "keep it on
   cooldown": does the player have own casts of this ability
@@ -61,6 +64,13 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
   own cooldowns.
 - Check configuration, assignment and target priority (adds!) first, then
   play. If all top findings concern play, this step was skipped.
+- Burst windows: check whether the shorter cooldowns (e.g. 1 min) that the
+  chosen talents tie to the long one (e.g. 2 min) land inside each window,
+  as an offset in seconds. A short CD several seconds late is a finding;
+  trace it back to the earlier cast where the drift began and name that as
+  the lever. Gaps that each "coincide with mechanics" do not close the
+  question — their combined effect on the next window does. Count uses over
+  the fight before recommending to hold a cooldown.
 - `absorbed` belongs in every damage and healing sum.
 - Outside information (patch notes, hotfixes, guides) is never "measured" —
   it carries source and date.
@@ -93,3 +103,16 @@ the output always happens in two separate steps, in separate replies:
      Build charts and timelines (including phase separator lines) compactly
      with CSS bars/grids or lean inline SVG, so that the complete report,
      including all four evidence markers, fits completely into one file.
+   - **Structure of the HTML:** one tab per topic, the first with the key
+     statement and data basis, the **last always "Glossary"**; works
+     offline (no external scripts, fonts or images). Every pull is a link
+     `https://www.warcraftlogs.com/reports/<meta.report_code>#fight=<fight_id>`
+     (new tab, link text = pull number of the night). Every ability name
+     links to `#ab-<ability_id>`; the link switches to the glossary tab and
+     scrolls there, the back button returns. The glossary lists only
+     abilities from the report, alphabetically: name, `description`,
+     `cooldown_s`/`cast_time_s` from the export's `glossary` (taken over,
+     not rewritten) and a link `https://www.wowhead.com/spell=<ability_id>`.
+     Not in the export's `glossary` → Wowhead link and "not in the export",
+     never a description from memory. The half-sentence explanation at the
+     first mention stays in the text.
