@@ -1,6 +1,9 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-24, matched to WCL Tool export **0.8.4**. Exports up to
+> As of 2026-10-29, matched to WCL Tool export **0.8.5** (player export
+> identical in data to 0.8.4; the separate raid export `Raid__…__kicks.csv`/
+> `…__dispels.csv` is not covered here — follow its own
+> `…__README_Raid_Interrupts.md`/`…__README_Raid_Dispels.md`). Exports up to
 > 0.8.3 count the release of an empowered spell as a second keypress and
 > the spells released by *Stasis* as keypresses (see `is_keypress`), name
 > the README just `README_EXPORT.md` and carry an unexplained
@@ -1077,6 +1080,15 @@ pull links (rule 2) and skips the rest.
    same thing first as a rank and later again as a recommendation.
    **At most five** points in the first list, sorted by impact.
 5. **Subtotal:** how much is frame condition, how much is execution.
+
+   **A number that rests on an assumption is a range wherever it stands —
+   above all in the key statement at the top.** Example (healer
+   head-to-head, five healers against four): "about 4 % of the gap remain
+   after correcting for the number of healers" rests on the assumption that
+   the player's share would have stayed the same in the other raid. At the
+   top that becomes "roughly 2–6 % remain", and the assumption follows in
+   the text. A single figure there reads like a measurement, even when the
+   text below explains the assumption correctly.
 6. **Closing "What I cannot assess":** open points plus the export or role
    that would resolve them. Everything from `meta.not_queried` goes here.
 
