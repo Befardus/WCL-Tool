@@ -77,6 +77,9 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
 - Every statement carries exactly one of the four markers: measured,
   derived, suspected, not assessable. The legend is at the start of the
   report.
+- A number that rests on an assumption is given as a range, above all in
+  the key statement at the top ("roughly 2–6 %", not "4 %"); the
+  assumption follows in the text.
 
 ## Two-step output workflow (protects the output limit)
 
