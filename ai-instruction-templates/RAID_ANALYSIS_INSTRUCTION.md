@@ -1,10 +1,12 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-10-29, matched to WCL Tool export **0.8.5** (player export
-> identical in data to 0.8.4; the separate raid export `Raid__…__kicks.csv`/
-> `…__dispels.csv` is not covered here — follow its own
-> `…__README_Raid_Interrupts.md`/`…__README_Raid_Dispels.md`). Exports up to
-> 0.8.3 count the release of an empowered spell as a second keypress and
+> As of 2026-11-14, matched to WCL Tool export **0.9.1**. New since 0.8.5:
+> the section "Video, screenshots and plans" and the raid export in mode B
+> (`Raid__…__kicks.csv`, `…__dispels.csv`, and since 0.9.1
+> `…__defensives.csv`/`…__deaths.csv`, each with its own README). Exports
+> up to 0.9.0 have no `meta.pulls[].start_local` (wall-clock pull start for
+> video) and no raid `defensives.csv`/`deaths.csv`. Exports up to 0.8.3
+> count the release of an empowered spell as a second keypress and
 > the spells released by *Stasis* as keypresses (see `is_keypress`), name
 > the README just `README_EXPORT.md` and carry an unexplained
 > `without_pets` in `meta.support_healing` (ignore it). Exports up to
@@ -732,7 +734,49 @@ their own export the statement stays rough and is labelled as rough.
 
 **Limit of this mode, to be named explicitly:** `meta.raid` is a summary.
 Gear, talents, cooldowns and events of the other players are not available.
-Statements about them are hypotheses that would need their own export.
+Statements about them are hypotheses that would need their own export, or
+the raid export below.
+
+### The raid export (whole raid, no single player)
+
+Since 0.8.5 the tool also has a raid export with file names starting with
+`Raid__`. It covers every player of the exported pulls, but only for a few
+questions. Each CSV comes with its own README (`…__README_Raid_Interrupts.md`,
+`…__README_Raid_Dispels.md`, since 0.9.1 `…__README_Raid_Defensives.md`).
+Read the README first; it explains every column and takes precedence over
+this section on what a column means.
+- `kicks.csv`: every enemy cast that was interrupted at least once, with
+  its outcome (`interrupted`, `completed`, `caster_died`, `pull_ended`,
+  `unclear`). `completed` means the enemy finished casting, NOT how many
+  players it hit. Casts that were never interrupted in these pulls are
+  missing.
+- `dispels.csv`: every dispel, with who, what and on whom.
+- `defensives.csv` (since 0.9.1): one row per use of a defensive from a
+  fixed list (personal, external, raid), with who, when, buff length and,
+  for raid cooldowns, how many players got the buff.
+- `deaths.csv` (since 0.9.1): every death, with the defensives active at
+  that moment (`active_own`, `active_external`, `active_raid`) and the
+  player's last own personal defensive.
+
+Rules for the raid export:
+- **It contains no assignment.** Kick order, dispel duties and cooldown
+  plans always come from the user. Without them, describe only what
+  happened. With them, the rules in "Reading cooldown assignments
+  correctly" apply, and the plan stays the target, not an observation
+  (see "Video, screenshots and plans").
+- **Coverage at a death is measured; "should have pressed" is not.**
+  `deaths.csv` says which defensives were active. Whether one more was
+  READY needs its cooldown. The raid export has no glossary, so the
+  cooldown comes from a source with name and date (Wowhead, the player's
+  own export), marked *derived*. Without such a source, readiness is not
+  assessable.
+- Abilities without a buff (Darkness, Revival, Healthstone …) have only
+  the cast. Whether a player stood inside a ground effect without a buff
+  is not in the log; the video may show it.
+- Judge only deaths with `before_wipe_cascade` true, as in B5.
+- The raid export has no `meta`, so no `start_local`. For video, take the
+  pull start from a player export of the same pulls, or use an anchor
+  event.
 
 ---
 
@@ -845,6 +889,57 @@ checks above.
 
 ---
 
+## Video, screenshots and plans
+
+Besides the export, users often add a raid plan (screenshots of
+assignments, positions, heal notes), a VoD or POV clip, or single
+screenshots. They are valuable, and they are also the easiest way to report
+something nobody saw.
+
+**A plan is the target, never an observation.** A screenshot of the raid
+plan says what was SUPPOSED to happen. Only the log or the video says what
+DID happen. "Positions as planned", "3/3 exact" or "all 20 players correct"
+are never measured just because the plan says so. In a real test a report
+marked plan conformity as measured, but the 37-second video of the same
+pull showed something else. If the plan is all there is for a question, the
+answer is "not assessable".
+
+**Every statement taken from a video names:**
+- the video time (mm:ss);
+- what is visible there: the boss cast bar, a raid frame, the player's own
+  character, a ground effect.
+
+A statement without that is not measured. If the picture is unclear, too
+small or only one frame, it is *suspected*. If you did not watch that part
+(or could not open the video at all), it is *not assessable*. If you
+cannot process video yourself, say so plainly; work with the stills the
+user gives you instead, and do not describe the video.
+
+**Map video time to log time before you compare.**
+- Since export 0.9.1 the player export has `meta.pulls[].start_local`,
+  the wall-clock start of each pull with its UTC offset. Pull start minus
+  the start of the recording = the position of the pull in the video.
+- Expect 1–2 s of drift. Confirm the offset with one visible anchor that
+  is also in the data: a boss cast in `boss_timeline`, a death in
+  `raid_deaths`/`deaths.csv`. State the offset you used.
+- Without `start_local` (older exports, or the raid export alone), the
+  anchor event is the only way. If no anchor can be found, compare only
+  the order of events, never seconds.
+
+**What only the video can show, and what only the log can show.**
+- The export has **no positions**. Who stood where, ran out late or
+  soaked comes only from the video, marked as such.
+- Numbers come only from the log: damage, healing, deaths, buff times.
+- If video and log disagree, name the conflict. The log wins for numbers
+  and timing, the video for positions and what was visible on screen.
+
+**Short events can be missed.** Video models often look at about one frame
+per second. A cast or a death that lasts under a second may not be in any
+frame. "Not seen in the video" is therefore not "did not happen". Check it
+against the log before you say anything.
+
+---
+
 ## Defensive and survivability chain (all roles, always)
 
 This chain runs **in addition** to the role-specific chain and over the
@@ -903,6 +998,10 @@ Place the player's death in `raid_deaths` (exports from 0.8.2 on): its
 `death_nr` and `before_wipe_cascade` say whether it was an early individual
 death or part of the wipe. A death in the cascade is not a mistake of this
 player by itself.
+
+For the OTHER players' defensives at a death, the player export has
+nothing; the raid export's `deaths.csv` (since 0.9.1) has them. Without it,
+say "not assessable" instead of guessing from the raid plan.
 
 **D5. Comparison with the reference log — only limited.** Admissible only
 for damage sources both players took, typically raid-wide abilities.
