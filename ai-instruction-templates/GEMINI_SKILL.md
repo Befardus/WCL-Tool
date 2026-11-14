@@ -1,6 +1,6 @@
 ---
 name: wcl-raid-analyst
-description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV event files, …__README_EXPORT.md) or asks for a raid, player or healer performance analysis based on them.
+description: Analyses exports of the WCL Tool (Warcraft Logs data) and writes raid performance reports from them. Use when the user provides WCL Tool export files (…__compact.json, …__summary.json, CSV event files, …__README_EXPORT.md, or the raid export Raid__…__kicks.csv / dispels.csv / defensives.csv / deaths.csv with their README_Raid_… files), possibly with raid plans, screenshots or a video, or asks for a raid, player or healer performance analysis based on them.
 ---
 
 # WCL Raid Analyst
@@ -48,6 +48,12 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
    `…__full.json`. Prefer the CSV there too; use `…__full.json` only if
    nothing else is available. If it is truncated, everything beyond the
    cut is not assessable.
+5. **Raid export** (files starting with `Raid__`, whole raid, no single
+   player): read each `…__README_Raid_….md` first. `kicks.csv`,
+   `dispels.csv`, and since 0.9.1 `defensives.csv` (every defensive use)
+   and `deaths.csv` (defensives active at each death, with
+   `before_wipe_cascade`). It contains NO assignment; that always comes
+   from the user. See "The raid export" in the reference file.
 
 ## What must never happen
 
@@ -80,6 +86,14 @@ Since export 0.6.0 an export is a fixed set of at most 10 files.
 - A number that rests on an assumption is given as a range, above all in
   the key statement at the top ("roughly 2–6 %", not "4 %"); the
   assumption follows in the text.
+- A raid plan (screenshot, notes, WoWUtils) is the TARGET, never an
+  observation. "Positions as planned" or "all players correct" is never
+  measured from the plan. Every statement from a video names the video
+  time (mm:ss) and what is visible there; unclear = suspected, not watched
+  = not assessable. Map video to log with `meta.pulls[].start_local`
+  (since 0.9.1) and confirm with one visible anchor event; positions come
+  only from the video, numbers only from the log. Details: "Video,
+  screenshots and plans" in the reference file.
 
 ## Two-step output workflow (protects the output limit)
 
