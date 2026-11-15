@@ -120,6 +120,13 @@ the output always happens in two separate steps, in separate replies:
      Build charts and timelines (including phase separator lines) compactly
      with CSS bars/grids or lean inline SVG, so that the complete report,
      including all four evidence markers, fits completely into one file.
+   - **Survival timeline:** every report about deaths or defensives gets
+     one per pull discussed: boss abilities, big hits, defensives as bars
+     over their duration, deaths as red lines; hover details via an SVG
+     `<title>` per mark (no script). "Ready" in a hover only for abilities
+     the player used in these pulls, and only as "ready" (unused this pull
+     or `cooldown_s` passed) or "maybe still on cooldown" — talents can
+     shorten cooldowns. Details: "Charts" in the reference file.
    - **Structure of the HTML:** one tab per topic, the first with the key
      statement and data basis, the **last always "Glossary"**; works
      offline (no external scripts, fonts or images). Every pull is a link
