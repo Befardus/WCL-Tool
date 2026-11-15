@@ -1,6 +1,9 @@
 # Project instruction: raid performance analysis
 
-> As of 2026-11-14, matched to WCL Tool export **0.9.1**. New since 0.8.5:
+> As of 2026-11-15, matched to WCL Tool export **0.9.1**. New on
+> 2026-11-15: the survival timeline (section "Charts") for every report
+> about deaths or defensives, with hover details and an honest "ready".
+> New since 0.8.5:
 > the section "Video, screenshots and plans" and the raid export in mode B
 > (`Raid__…__kicks.csv`, `…__dispels.csv`, and since 0.9.1
 > `…__defensives.csv`/`…__deaths.csv`, each with its own README). Exports
@@ -965,7 +968,9 @@ timestamps. Separate into: raid-wide / mechanic-bound / avoidable.
   food and flask — check the auras against the glossary, do not count
   them.
 - Was one available and unused? Compute last use plus cooldown against the
-  time of the hit.
+  time of the hit — with the limits from "Charts" (survival timeline):
+  `cooldown_s` is the tooltip value, talents can shorten it, so "unused
+  although ready" holds only for the conservative case.
 - How high was the mitigation? `mitigated` and `unmitigatedAmount` give the
   rate per hit directly; `absorb_remaining` says how much shield volume was
   still open at the moment of the hit.
@@ -1246,6 +1251,63 @@ This is the most important check for healers of all — whether a cooldown
 fit the damage event — and it cannot be shown as a count ("5× Celestial
 Conduit"). Where two logs are compared, both tracks go one below the other,
 not into separate charts.
+
+**Every report about deaths or defensives gets a survival timeline** — all
+roles, player export and raid export alike. It is the chart a raider knows
+from Warcraft Logs, and it answers "what happened in the seconds before I
+died" faster than any table. One timeline per pull (at most the pulls the
+report talks about), on a shared time axis (`time_in_pull_s`), phases
+marked:
+
+1. boss abilities from `boss_timeline` (raid export without a player
+   export: leave the track out and say so),
+2. the big hits on the player from `damagetaken` (height or thickness by
+   amount including `absorbed`),
+3. **defensives as bars over their duration**, not as dots: own personal
+   ones in one track, externals and raid cooldowns on the player in a
+   second. Player export: from `applybuff` to the next `removebuff` of the
+   same ability in `buffs` (no `removebuff` = until the pull ends); a
+   cast without a buff (Healthstone, potion, Darkness …) is a short mark at
+   the cast. Raid export: `defensives.csv`, bar length `buff_duration_s`,
+   empty = mark only.
+4. **deaths as a red vertical line** across all tracks, labelled with the
+   killing ability (`raid_deaths`, or `deaths.csv` in the raid export).
+   A death with `before_wipe_cascade` false is drawn too, but in grey.
+
+**Hovering shows the details.** Every mark carries its details as a hover
+text: ability, time (mm:ss and seconds), amount or duration, phase. Use an
+SVG `<title>` inside each mark — every browser shows it on hover, without a
+script or an internet connection. The hover text of a death adds what was
+active (`active_own`, `active_external`, `active_raid` from `deaths.csv`,
+or the `active_auras` of the killing hit) and the player's last own
+defensive with its distance in seconds.
+
+**"What was ready" in the hover is a claim with three limits, and it says
+so.** The export knows only the cooldown from the ability's tooltip
+(`glossary.cooldown_s`); talents shorten many defensives, some have
+charges, and an ability the player never pressed is not in the log at all.
+So:
+
+- List as ready only abilities the player used at least once in the
+  exported pulls (then it is certain they have it).
+- **"ready"** only if it was not yet used in this pull, or at least
+  `cooldown_s` has passed since its last use. Everything else is **"maybe
+  still on cooldown"** — never "on cooldown", because a talent may have
+  shortened it.
+- No `cooldown_s` for an ability (not in the glossary, or the raid export,
+  which has no glossary): "readiness unknown", unless a cooldown from a
+  named and dated source is given, marked *derived*.
+- Healthstone: whether the player carried one is not in the log; say
+  "used in this pull" or "not used", never "was ready".
+
+Below the chart, in one line: which of these limits applied in this
+report.
+
+**Keep it within the output limit:** per pull at most about 30 hit marks
+(the biggest ones, the rest left out and said so), one reusable mark
+style, hover texts short. Five pulls with a timeline each are better than
+twenty without hover text. The timeline replaces nothing in D2/D4: the event pairs stay in
+the text; the chart shows them in context.
 
 **Idle time belongs on a timeline, not in a histogram.** A histogram of gap
 sizes says *how much* idle time there was, but not *when* — and thus not
